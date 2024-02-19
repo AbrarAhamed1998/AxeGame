@@ -1,4 +1,10 @@
 #pragma once
-void MoveCircle(int &circleCenterX, int circleHorizontalSpeed, int &circleCenterY, int circleVerticalSpeed);
+void PatrollingAxe(int &axePosY, int &axeVerticalDirection, int windowHeight, int axeHeight);
 
-void LimitCircleMovement(int &circleCenterX, int circleRadius, int MaxHorizontalDistance, int &previousXVal, int &circleCenterY, int MaxVerticalDistance, int &previousYVal);
+int XInput();
+
+int YInput();
+
+bool LimitMovementAcrossAxis(int currentvalue, int minOffsetValue, int MaxValueOfAxis);
+
+void MoveCircleAcrossAxis(int &axisValue, int speed, int inputDirection, bool canMove);
