@@ -13,25 +13,25 @@ int main()
     int windowCenterY = windowHeight/2;
     /// Circle initialization variables
 
-    int circleCenterX = windowCenterX;
+    int circleCenterX = 20;
     int circleCenterY = windowCenterY;
     int circleRadius = 30;
     Color circleColor = BLUE;
 
-    //int left_circleEdge{circleCenterX-circleRadius};
-    //int right_circleEdge{circleCenterX+circleRadius};
-    //int up_circleEdge{circleCenterY-circleRadius};
-    //int bottom_circleEdge{circleCenterY+circleRadius}; 
+    int left_circleEdge{circleCenterX-circleRadius};
+    int right_circleEdge{circleCenterX+circleRadius};
+    int up_circleEdge{circleCenterY-circleRadius};
+    int bottom_circleEdge{circleCenterY+circleRadius}; 
 
     int axePosX = 600;
     int axePosY = 0;
     int axeWidth = 50;
     int axeHeight = 50;
 
-    //int left_axeEdge{axePosX - (axeWidth/2)};
-    //int right_axeEdge{axePosX + (axeWidth/2)};
-    //int up_axeEdge{axePosY - (axeHeight/2)};
-    //int low_axeEdge{axePosY + (axeHeight/2)};
+    int left_axeEdge{axePosX - (axeWidth/2)};
+    int right_axeEdge{axePosX + (axeWidth/2)};
+    int up_axeEdge{axePosY - (axeHeight/2)};
+    int bottom_axeEdge{axePosY + (axeHeight/2)};
 
     //rectanglePosX -= rectangleWidth/2;
     Color rectangleColor = RED;
@@ -42,49 +42,70 @@ int main()
     int circleHorizontalSpeed = 20;
     int circleVerticalSpeed = 20;
 
+    int fontSize = 50;
+    
     //int previousValX = 0;
     //int previousValY = 0;
 
-    bool collisionWithAxe = false;
+    bool collisionWithAxe = 
+    bottom_axeEdge <= up_circleEdge 
+    && up_axeEdge >= bottom_circleEdge 
+    && left_axeEdge <= right_circleEdge 
+    && right_axeEdge >= left_circleEdge;
+
+    bool isGameOver = false;
 
     SetTargetFPS(60);
     while(!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(BGColor);
-
-        if(collisionWithAxe)
+        collisionWithAxe = bottom_axeEdge >= up_circleEdge 
+                            && up_axeEdge <= bottom_circleEdge 
+                            && left_axeEdge <= right_circleEdge 
+                            && right_axeEdge >= left_circleEdge;
+        if(collisionWithAxe || isGameOver)
         {
-            DrawText("GAME OVER!!", windowCenterX, windowCenterY, 100, RED);
+            DrawText("GAME OVER!!", windowCenterX-(fontSize*3), windowCenterY, fontSize, RED);
+            isGameOver = true;
         }
         else
         {
             #pragma region CIRCLE SETUP
 
-        DrawCircle(circleCenterX, circleCenterY, circleRadius, circleColor);
-        //float deltaTime = GetFrameTime();
-        //previousValX = circleCenterX;
-        //previousValY = circleCenterY;
-        MoveCircleAcrossAxis(circleCenterX, 
-        circleHorizontalSpeed, 
-        XInput(), 
-        !LimitMovementAcrossAxis(circleCenterX + (XInput() * circleHorizontalSpeed) , circleRadius, windowWidth));
+            DrawCircle(circleCenterX, circleCenterY, circleRadius, circleColor);
+            //float deltaTime = GetFrameTime();
+            //previousValX = circleCenterX;
+            //previousValY = circleCenterY;
+            MoveCircleAcrossAxis(circleCenterX, 
+            circleHorizontalSpeed, 
+             XInput(), 
+            !LimitMovementAcrossAxis(circleCenterX + (XInput() * circleHorizontalSpeed) , circleRadius, windowWidth));
 
-        MoveCircleAcrossAxis(circleCenterY,
-        circleVerticalSpeed,
-        YInput(),
-        !LimitMovementAcrossAxis(circleCenterY + (YInput() * circleVerticalSpeed) , circleRadius, windowHeight));
-        
+            MoveCircleAcrossAxis(circleCenterY,
+            circleVerticalSpeed,
+            YInput(),
+            !LimitMovementAcrossAxis(circleCenterY + (YInput() * circleVerticalSpeed) , circleRadius, windowHeight));
 
-        #pragma endregion
+            left_circleEdge = circleCenterX-circleRadius;
+            right_circleEdge = circleCenterX+circleRadius;
+            up_circleEdge = circleCenterY-circleRadius;
+            bottom_circleEdge = circleCenterY+circleRadius;
 
-        #pragma region AXE SETUP
+            #pragma endregion
 
-        DrawRectangle(axePosX, axePosY, axeWidth, axeHeight, rectangleColor);
+            #pragma region AXE SETUP
 
-        PatrollingAxe(axePosY, axeVerticalDirection, windowHeight, axeHeight);
+            DrawRectangle(axePosX, axePosY, axeWidth, axeHeight, rectangleColor);
 
-        #pragma endregion
+            PatrollingAxe(axePosY, axeVerticalDirection, windowHeight, axeHeight);
+
+            left_axeEdge = axePosX - (axeWidth/2);
+            right_axeEdge = axePosX + (axeWidth/2);
+            up_axeEdge = axePosY - (axeHeight/2);
+            bottom_axeEdge = axePosY + (axeHeight/2);
+
+            #pragma endregion
 
         }
         EndDrawing();
